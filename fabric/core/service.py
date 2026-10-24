@@ -7,6 +7,7 @@ import gi._signalhelper
 import gi._propertyhelper
 import gi.overrides.GObject
 
+from enum import Enum
 from dataclasses import dataclass
 from collections.abc import Callable
 from typing import (
@@ -97,7 +98,12 @@ class Property(OldProperty, Generic[T]):
                 lambda instance, value: self.fset(instance, value),  # type: ignore
             )
         try:
-            _type = type if issubclass(type, (bool, int, float, str)) else object
+            if issubclass(type, Enum) and not hasattr(type, "__gtype__"):
+                # PyGObject 3.51+ turns GType-less GI enums (e.g. GtkLayerShell's)
+                # into plain IntEnums, which it can't use as property types
+                _type, default_value = object, None
+            else:
+                _type = type if issubclass(type, (bool, int, float, str)) else object
         except TypeError:
             _type = object
 
