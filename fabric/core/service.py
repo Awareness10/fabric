@@ -98,12 +98,7 @@ class Property(OldProperty, Generic[T]):
                 lambda instance, value: self.fset(instance, value),  # type: ignore
             )
         try:
-            if issubclass(type, Enum) and not hasattr(type, "__gtype__"):
-                # PyGObject 3.51+ turns GType-less GI enums (e.g. GtkLayerShell's)
-                # into plain IntEnums, which it can't use as property types
-                _type, default_value = object, None
-            else:
-                _type = type if issubclass(type, (bool, int, float, str)) else object
+            _type, default_type = (object, None) if issubclass(type, Enum) and not hasattr(type, "__gtype__") else (type if issubclass(type, (bool, int, float, str)) else object, default_type)
         except TypeError:
             _type = object
 
