@@ -98,7 +98,7 @@ class Property(OldProperty, Generic[T]):
                 lambda instance, value: self.fset(instance, value),  # type: ignore
             )
         try:
-            _type, default_type = (object, None) if issubclass(type, Enum) and not hasattr(type, "__gtype__") else (type if issubclass(type, (bool, int, float, str)) else object, default_type)
+            _type, default_value = (object, None) if issubclass(type, Enum) and not hasattr(type, "__gtype__") else (type if issubclass(type, (bool, int, float, str)) else object, default_value)
         except TypeError:
             _type = object
 
